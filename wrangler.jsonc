@@ -6,7 +6,9 @@
   "workers_dev": true,
   "observability": {
     "enabled": true,
-    "traces": { "enabled": true }
+    "traces": {
+      "enabled": true
+    }
   },
   "d1_databases": [
     {
@@ -15,5 +17,9 @@
       "database_id": "2bd7bc05-3f00-4faf-9dff-054b0c50b98a",
       "migrations_dir": "migrations"
     }
-  ]
+  ],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  }
 }
