@@ -86,6 +86,10 @@ Request:
 
 The target user must already exist in AtDev Cloud. The amount must be an integer from 1 to 100000.
 
+## Trusted AtDev Cloud bridge
+
+AtDev Cloud now exposes `POST /internal/v1/walletie/grants` for authenticated reward-producing backends. It forwards grants to this service using the same `WALLETIE_SERVICE_TOKEN` described above. Product backends must validate their own reward events and use stable event-derived idempotency keys. See [the bridge contract](ATDEV_CLOUD_BRIDGE.md). The browser must never call the internal credit-grant endpoint or receive service credentials.
+
 ## Idempotency
 
 Every mutation requires an idempotency key. Repeating the same operation with the same key returns the original transaction. Reusing a key for a different operation returns HTTP 409.
