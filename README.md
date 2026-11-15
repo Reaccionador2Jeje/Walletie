@@ -13,7 +13,7 @@
 - [x] Authenticated wallet and transaction endpoints
 - [x] Server-priced demo catalogue and spending endpoint
 - [x] Service-authenticated credit grants
-- [ ] Walletie dashboard
+- [x] Walletie dashboard
 - [ ] AtDev Cloud service-to-service integration
 - [ ] Automated integration tests
 
