@@ -96,3 +96,17 @@ test("HTTP errors preserve status and server message", async () => {
     error.message === "Insufficient credits."
   );
 });
+
+
+test("allows HTTP only for localhost development", () => {
+  assert.doesNotThrow(() => new Walletie({
+    baseUrl: "http://localhost:8787",
+    getAccessToken: () => "token",
+    fetchImpl: async () => response({})
+  }));
+  assert.throws(() => new Walletie({
+    baseUrl: "http://walletie.example.com",
+    getAccessToken: () => "token",
+    fetchImpl: async () => response({})
+  }), /HTTPS except for local loopback/);
+});
