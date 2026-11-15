@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131c">
+  <meta name="description" content="Walletie: créditos virtuales del ecosistema AtDev.">
+  <title>Walletie — AtDev</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10131c;
+      --panel: #191e2b;
+      --panel-soft: #202738;
+      --text: #f4f6fb;
+      --muted: #a7b0c2;
+      --accent: #8c7bff;
+      --accent-2: #54d6c5;
+      --danger: #ff7b88;
+      --border: #30394c;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(circle at 85% 0%, #29234d 0, transparent 32rem), var(--bg); color: var(--text); }
+    button, input { font: inherit; }
+    .shell { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 56px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:36px; }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .logo { width:44px; height:44px; display:grid; place-items:center; border-radius:14px; background:linear-gradient(135deg,#8d7bff,#55d8c7); color:#111522; font-weight:900; font-size:24px; }
+    .brand-name { font-size:20px; font-weight:800; letter-spacing:-.5px; }
+    .brand-sub { color:var(--muted); font-size:12px; margin-top:2px; }
+    .pill { border:1px solid var(--border); color:var(--accent-2); border-radius:999px; padding:7px 11px; font-size:12px; white-space:nowrap; }
+    h1 { font-size:clamp(28px,5vw,42px); letter-spacing:-1.5px; margin:0 0 8px; }
+    .intro { color:var(--muted); margin:0 0 26px; line-height:1.6; }
+    .grid { display:grid; grid-template-columns:1.15fr .85fr; gap:18px; }
+    .card { background:linear-gradient(160deg,rgba(32,39,56,.96),rgba(25,30,43,.96)); border:1px solid var(--border); border-radius:20px; padding:22px; box-shadow:0 16px 40px #0002; }
+    .balance-card { min-height:220px; position:relative; overflow:hidden; }
+    .balance-card:after { content:""; position:absolute; width:210px; height:210px; border-radius:50%; border:1px solid #ffffff18; right:-50px; top:35px; box-shadow:0 0 0 24px #ffffff08,0 0 0 50px #ffffff05; pointer-events:none; }
+    .eyebrow { text-transform:uppercase; letter-spacing:1.4px; color:var(--muted); font-size:11px; font-weight:700; }
+    .balance { font-size:clamp(42px,8vw,64px); font-weight:850; letter-spacing:-2px; margin:18px 0 4px; }
+    .unit { color:var(--accent-2); font-size:13px; font-weight:700; }
+    .note { color:var(--muted); font-size:12px; margin-top:22px; }
+    .connect { display:flex; flex-direction:column; gap:12px; }
+    label { color:var(--muted); font-size:13px; }
+    input { width:100%; border:1px solid var(--border); border-radius:12px; background:#111722; color:var(--text); padding:13px 14px; outline:none; }
+    input:focus { border-color:var(--accent); box-shadow:0 0 0 3px #8c7bff22; }
+    button { border:0; border-radius:12px; padding:12px 16px; background:var(--accent); color:#fff; font-weight:750; cursor:pointer; transition:transform .15s,filter .15s; }
+    button:hover { filter:brightness(1.1); transform:translateY(-1px); }
+    button:disabled { opacity:.55; cursor:not-allowed; transform:none; }
+    .secondary { background:var(--panel-soft); border:1px solid var(--border); color:var(--text); }
+    .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:28px 0 14px; }
+    h2 { margin:0; font-size:18px; letter-spacing:-.4px; }
+    .products { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .product { display:flex; flex-direction:column; gap:12px; }
+    .product-icon { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; background:#8c7bff20; font-size:21px; }
+    .product-title { font-weight:750; }
+    .product-desc { color:var(--muted); font-size:13px; line-height:1.5; min-height:38px; }
+    .product-bottom { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:auto; }
+    .price { color:var(--accent-2); font-weight:800; font-size:13px; }
+    .product button { padding:9px 12px; font-size:12px; }
+    .history { display:flex; flex-direction:column; gap:0; }
+    .transaction { display:flex; justify-content:space-between; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--border); }
+    .transaction:last-child { border-bottom:0; }
+    .tx-title { font-weight:700; font-size:13px; }
+    .tx-meta { color:var(--muted); font-size:11px; margin-top:5px; }
+    .tx-amount { font-weight:800; white-space:nowrap; }
+    .positive { color:var(--accent-2); }
+    .negative { color:var(--danger); }
+    .empty { color:var(--muted); font-size:13px; padding:20px 0; }
+    .status { min-height:20px; font-size:12px; color:var(--muted); }
+    .status.error { color:var(--danger); }
+    .status.success { color:var(--accent-2); }
+    footer { margin-top:30px; color:var(--muted); font-size:11px; line-height:1.7; text-align:center; }
+    .hidden { display:none !important; }
+    @media (max-width:760px) { .grid { grid-template-columns:1fr; } header { margin-bottom:26px; } .products { grid-template-columns:1fr; } .product-desc { min-height:0; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand">
+        <div class="logo">W</div>
+        <div><div class="brand-name">Walletie</div><div class="brand-sub">by AtDev Dev</div></div>
+      </div>
+      <div class="pill">● Créditos virtuales</div>
+    </header>
+
+    <h1>Tu ecosistema. Tus créditos.</h1>
+    <p class="intro">Consulta tu saldo y utiliza créditos de prueba en experiencias del ecosistema AtDev.</p>
+
+    <section class="grid">
+      <article class="card balance-card">
+        <div class="eyebrow">Saldo disponible</div>
+        <div class="balance" id="balance">—</div>
+        <div class="unit">ATDEV CREDITS</div>
+        <div class="note">Estos créditos no tienen valor monetario ni pueden retirarse.</div>
+      </article>
+
+      <article class="card connect">
+        <div>
+          <div class="eyebrow">Conectar cuenta</div>
+          <h2 style="margin-top:8px">AtDev Cloud</h2>
+        </div>
+        <label for="token">Token de acceso de AtDev Cloud</label>
+        <input id="token" type="password" autocomplete="off" placeholder="Pega tu token JWT aquí">
+        <button id="connectBtn">Conectar cartera</button>
+        <button id="disconnectBtn" class="secondary hidden">Desconectar</button>
+        <div id="status" class="status" role="status" aria-live="polite">La conexión es temporal y el token solo permanece en memoria mientras esta pestaña está abierta.</div>
+      </article>
+    </section>
+
+    <div class="section-head"><h2>Catálogo de demostración</h2><span class="eyebrow">V1 · pruebas</span></div>
+    <section class="products">
+      <article class="card product">
+        <div class="product-icon">🎨</div>
+        <div class="product-title">Tema de perfil</div>
+        <div class="product-desc">Un artículo de ejemplo para probar el gasto de créditos.</div>
+        <div class="product-bottom"><span class="price">10 créditos</span><button data-sku="profile_theme" disabled>Usar créditos</button></div>
+      </article>
+      <article class="card product">
+        <div class="product-icon">🏷️</div>
+        <div class="product-title">Insignia de proyecto</div>
+        <div class="product-desc">Una insignia de demostración para futuras integraciones AtDev.</div>
+        <div class="product-bottom"><span class="price">25 créditos</span><button data-sku="project_badge" disabled>Usar créditos</button></div>
+      </article>
+    </section>
+
+    <div class="section-head"><h2>Actividad reciente</h2><button id="refreshBtn" class="secondary" disabled>Actualizar</button></div>
+    <section class="card history" id="history"><div class="empty">Conecta tu cuenta para consultar los movimientos.</div></section>
+
+    <footer>
+      Walletie V1 · AtDev Dev<br>
+      Créditos virtuales sin valor monetario. Sin depósitos, retiros, transferencias externas ni conversión a dinero.
+    </footer>
+  </main>
+
+  <script>
+    let accessToken = "";
+    const $ = (selector) => document.querySelector(selector);
+    const statusBox = $("#status");
+    const balanceBox = $("#balance");
+    const historyBox = $("#history");
+    const connectButton = $("#connectBtn");
+    const disconnectButton = $("#disconnectBtn");
+    const refreshButton = $("#refreshBtn");
+    const productButtons = [...document.querySelectorAll("[data-sku]")];
+
+    function setStatus(message, kind = "") {
+      statusBox.textContent = message;
+      statusBox.className = "status" + (kind ? " " + kind : "");
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        ...options,
+        headers: {
+          ...(options.body ? { "content-type": "application/json" } : {}),
+          authorization: "Bearer " + accessToken,
+          ...(options.headers || {})
+        }
+      });
+      const data = response.status === 204 ? {} : await response.json();
+      if (!response.ok) throw new Error(data.error || "No se pudo completar la solicitud.");
+      return data;
+    }
+
+    function setConnected(connected) {
+      connectButton.classList.toggle("hidden", connected);
+      disconnectButton.classList.toggle("hidden", !connected);
+      refreshButton.disabled = !connected;
+      productButtons.forEach(button => button.disabled = !connected);
+      $("#token").disabled = connected;
+    }
+
+    function renderTransactions(transactions) {
+      if (!transactions.length) {
+        historyBox.innerHTML = '<div class="empty">Todavía no tienes movimientos.</div>';
+        return;
+      }
+      historyBox.replaceChildren();
+      for (const tx of transactions) {
+        const row = document.createElement("div");
+        row.className = "transaction";
+        const details = document.createElement("div");
+        const title = document.createElement("div");
+        title.className = "tx-title";
+        title.textContent = tx.type === "credit" ? "Créditos recibidos" : tx.type === "spend" ? "Créditos utilizados" : "Ajuste";
+        const meta = document.createElement("div");
+        meta.className = "tx-meta";
+        meta.textContent = (tx.source || "AtDev") + " · " + new Date(tx.created_at).toLocaleString();
+        details.append(title, meta);
+        const amount = document.createElement("div");
+        amount.className = "tx-amount " + (tx.type === "credit" ? "positive" : "negative");
+        amount.textContent = (tx.type === "credit" ? "+" : "−") + Number(tx.amount).toLocaleString() + " créditos";
+        row.append(details, amount);
+        historyBox.append(row);
+      }
+    }
+
+    async function refreshWallet() {
+      const [walletData, historyData] = await Promise.all([
+        api("/v1/wallet"),
+        api("/v1/wallet/transactions?limit=30")
+      ]);
+      balanceBox.textContent = Number(walletData.wallet.balance).toLocaleString();
+      renderTransactions(historyData.transactions);
+    }
+
+    connectButton.addEventListener("click", async () => {
+      const candidate = $("#token").value.trim();
+      if (!candidate) return setStatus("Pega primero tu token de AtDev Cloud.", "error");
+      accessToken = candidate;
+      connectButton.disabled = true;
+      setStatus("Verificando cuenta...");
+      try {
+        await refreshWallet();
+        setConnected(true);
+        $("#token").value = "";
+        setStatus("Cartera conectada correctamente.", "success");
+      } catch (error) {
+        accessToken = "";
+        setStatus(error.message, "error");
+      } finally {
+        connectButton.disabled = false;
+      }
+    });
+
+    disconnectButton.addEventListener("click", () => {
+      accessToken = "";
+      balanceBox.textContent = "—";
+      historyBox.innerHTML = '<div class="empty">Conecta tu cuenta para consultar los movimientos.</div>';
+      setConnected(false);
+      setStatus("Sesión desconectada.");
+    });
+
+    refreshButton.addEventListener("click", async () => {
+      refreshButton.disabled = true;
+      try {
+        await refreshWallet();
+        setStatus("Cartera actualizada.", "success");
+      } catch (error) {
+        setStatus(error.message, "error");
+      } finally {
+        refreshButton.disabled = false;
+      }
+    });
+
+    productButtons.forEach(button => {
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        try {
+          const result = await api("/v1/wallet/spend", {
+            method: "POST",
+            body: JSON.stringify({
+              sku: button.dataset.sku,
+              idempotency_key: crypto.randomUUID()
+            })
+          });
+          await refreshWallet();
+          setStatus(result.replayed ? "Esta operación ya había sido procesada." : "Compra de demostración completada.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
