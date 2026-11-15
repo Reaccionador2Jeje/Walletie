@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "walletie",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-15",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true,
+    "traces": {
+      "enabled": true
+    }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "walletie-db",
+      "database_id": "REPLACE_WITH_WALLETIE_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
