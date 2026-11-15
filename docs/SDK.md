@@ -5,7 +5,7 @@ Walletie is the single source of truth for AtDev virtual-credit balances. Produc
 ## Compatibility principles
 
 - One AtDev identity maps to one Walletie wallet.
-- The host product obtains authentication from AtDev Cloud and supplies a short-lived/current access token through `getAccessToken`.
+- **Current V1 limitation:** the host product must supply an AtDev Cloud HS256 access token through `getAccessToken`. AtDev Accounts OIDC/RS256 and Joynexa ID sessions are not accepted yet; see [identity compatibility](IDENTITY.md).
 - Walletie derives the owner from the signed token. A client must never send an arbitrary owner ID to read or spend credits.
 - Product prices and SKU permissions are enforced by Walletie, not by the browser.
 - Credit grants are server-to-server only. The public SDK deliberately has no grant method and must never contain the service token.
@@ -21,7 +21,7 @@ import { Walletie } from "./src/client.js";
 
 const walletie = new Walletie({
   baseUrl: "https://walletie.example.com",
-  // Connect this callback to the host product's AtDev Cloud auth session.
+  // Current V1 requires an AtDev Cloud bearer token. Other identity providers need a bridge first.
   getAccessToken: async () => authSession.getAccessToken()
 });
 
@@ -32,7 +32,7 @@ const history = await walletie.getTransactions({ limit: 20 });
 const purchase = await walletie.spend("profile_theme");
 ```
 
-The SDK does not store tokens in localStorage, sessionStorage, cookies, or files. The host application owns authentication and token lifecycle. Pass a function that obtains the current token when a request is made.
+The SDK does not store tokens in localStorage, sessionStorage, cookies, or files. The host application owns authentication and token lifecycle. Pass a function that obtains the current token when a request is made. In V1, that token must be issued by AtDev Cloud; the SDK callback alone does not translate Joynexa ID or OIDC tokens.
 
 For retry-safe flows, create and retain an idempotency key for the lifetime of one logical purchase:
 
