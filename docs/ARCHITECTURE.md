@@ -1,31 +1,46 @@
 # Walletie V1 architecture
 
-Walletie is an AtDev ecosystem virtual-credits service. Credits have no monetary value and cannot be deposited, withdrawn, redeemed for cash, or transferred outside approved AtDev products.
+Walletie is the virtual-credits wallet for the AtDev ecosystem. Credits have no monetary value and cannot be deposited, withdrawn, redeemed for cash, or transferred outside approved AtDev products.
 
 ## Components
 
-- **Walletie Worker:** HTTP API, validation, authorization boundary, and business rules.
-- **D1:** wallet balances and append-only transaction history.
-- **AtDev identity:** trusted source of the authenticated user's stable ID.
-- **AtDev products:** request approved credit grants or spending through authenticated service integrations.
+- **Walletie Worker:** HTTP API, JWT verification, validation, and wallet business rules.
+- **AtDev Cloud D1:** shared identity database plus Walletie-specific wallet and ledger tables.
+- **AtDev Cloud identity:** source of user accounts and HS256 JWTs.
+- **AtDev products:** future trusted backend integrations that may grant credits through the internal service endpoint.
+
+## Shared identity and database
+
+Walletie binds its `DB` binding to the existing `atdev-cloud-db` D1 database. It does not create a second users table or separate login system.
+
+The `JWT_SECRET` Worker secret must match the secret used by AtDev Cloud. Walletie verifies the JWT signature, checks expiration, and confirms the subject still exists in the shared `users` table.
+
+The migrations directory includes the existing AtDev Cloud migration history followed by a uniquely named Walletie migration. This keeps the D1 migration tracker aligned when multiple Workers share the same database.
 
 ## Data model
 
 - `wallets`: one wallet per AtDev user.
-- `wallet_transactions`: append-only ledger of credit, spend, and administrative adjustment events.
+- `wallet_transactions`: ledger of credit, spend, and administrative adjustment events.
 
-The balance is a cached current total. The transaction ledger is the audit trail. Every mutation must be performed server-side and must create a corresponding ledger entry.
+The balance is a cached current total. The transaction ledger is the audit trail. Every balance mutation is performed server-side and paired with a ledger insert in one D1 batch.
 
-## Security requirements before enabling mutations
+## API boundaries
 
-1. Integrate with AtDev Cloud's real authentication and verify tokens server-side.
-2. Never trust a user ID, balance, amount, product price, or role supplied by the browser.
-3. Restrict credit grants to authenticated, authorized service identities.
-4. Require an idempotency key for every mutation.
-5. Use atomic database operations and reject insufficient balances.
-6. Keep transaction history append-only; corrections use compensating entries.
-7. Apply rate limits and audit administrative actions.
+- User routes under `/v1/*` require a valid AtDev Cloud JWT.
+- Credit grants use `POST /internal/v1/credits` and a separate `WALLETIE_SERVICE_TOKEN`.
+- Spending accepts a product SKU, not a client-supplied price. Walletie resolves the price from its server-side catalogue.
+- No transfer, deposit, withdrawal, cash conversion, or real-money feature exists.
 
-## Initial implementation boundary
+## Security requirements
 
-The first commit only provides the Worker foundation, database schema, and health endpoint. Wallet mutation routes remain disabled until trusted AtDev authentication and service authorization are integrated.
+1. Never trust a user ID, balance, amount, product price, or role supplied by the browser.
+2. Keep both Worker secrets out of source control and frontend code.
+3. Require an idempotency key for every mutation.
+4. Use atomic database operations and reject insufficient balances.
+5. Keep transaction history append-only; corrections use compensating entries.
+6. Restrict service credentials to trusted backend integrations.
+7. Add rate limiting, monitoring, and integration tests before broad production use.
+
+## Current implementation boundary
+
+The Worker API and D1 schema are implemented. The catalogue contains two demo SKUs. AtDev Cloud has not yet been connected as a credit-granting service, and the Walletie dashboard has not yet been built.
