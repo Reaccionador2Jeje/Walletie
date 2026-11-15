@@ -26,8 +26,19 @@ export function createIdempotencyKey() {
 
 export class Walletie {
   constructor({ baseUrl, getAccessToken, fetchImpl = globalThis.fetch } = {}) {
-    if (typeof baseUrl !== "string" || !/^https:\/\//i.test(baseUrl)) {
-      throw new TypeError("Walletie baseUrl must be an HTTPS URL.");
+    if (typeof baseUrl !== "string") {
+      throw new TypeError("Walletie baseUrl must be a valid HTTPS URL.");
+    }
+    let parsedBaseUrl;
+    try {
+      parsedBaseUrl = new URL(baseUrl);
+    } catch {
+      throw new TypeError("Walletie baseUrl must be a valid HTTPS URL.");
+    }
+    const localHttp = parsedBaseUrl.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(parsedBaseUrl.hostname);
+    if (parsedBaseUrl.protocol !== "https:" && !localHttp) {
+      throw new TypeError("Walletie requires HTTPS except for local loopback development.");
     }
     if (typeof getAccessToken !== "function") {
       throw new TypeError("getAccessToken must be an async function supplied by the host app.");
