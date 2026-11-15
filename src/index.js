@@ -80,12 +80,12 @@ async function verifyAtDevToken(request, env) {
 }
 
 async function readJson(request) {
-  const contentLength = Number(request.headers.get("content-length") || 0);
-  if (contentLength > 16384) throw Object.assign(new Error("Request body is too large."), { status: 413 });
+  const raw = await request.text();
+  if (raw.length > 16384) throw Object.assign(new Error("Request body is too large."), { status: 413 });
 
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     throw Object.assign(new Error("A valid JSON body is required."), { status: 400 });
   }
