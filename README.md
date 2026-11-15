@@ -15,6 +15,8 @@
 - [x] Service-authenticated credit grants
 - [x] Walletie dashboard
 - [x] Universal JavaScript / TypeScript SDK foundation
+- [x] CORS allowlist for cross-product browser integrations
+- [x] SDK and CORS unit test coverage
 - [x] Language-neutral REST integration protocol
 - [x] AtDev repository compatibility matrix
 - [ ] AtDev Cloud service-to-service integration
@@ -72,11 +74,11 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/API.md](docs/API.md).
    ```
 4. Apply migrations locally: `npm run db:local`
 5. Start the Worker: `npm run dev`
-6. Check syntax: `npm run check`
+6. Check syntax and tests: `npm run check` and `npm test`
 
 ## Cloudflare secrets
 
-Set the same `JWT_SECRET` used by AtDev Cloud as a Worker secret for Walletie. Set a separate `WALLETIE_SERVICE_TOKEN` for trusted server-to-server credit grants. Do not put either secret in source code, frontend JavaScript, GitHub, or chat messages.
+Set the same `JWT_SECRET` used by AtDev Cloud as a Worker secret for Walletie. Set a separate `WALLETIE_SERVICE_TOKEN` for trusted server-to-server credit grants. Do not put either secret in source code, frontend JavaScript, GitHub, or chat messages. For browser integrations hosted on other domains, configure the non-secret `WALLETIE_ALLOWED_ORIGINS` variable with a comma-separated exact-origin allowlist; Walletie's own origin is allowed automatically.
 
 Before applying remote migrations, verify that the configured D1 database is the existing AtDev Cloud database. Walletie migrations include the existing AtDev Cloud migration history so the shared database migration tracker remains consistent.
 
