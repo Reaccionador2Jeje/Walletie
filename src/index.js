@@ -196,15 +196,6 @@ async function handleApi(request, env) {
   const path = url.pathname;
   const method = request.method.toUpperCase();
 
-  if (method === "GET" && path === "/") {
-    return json({
-      name: "Walletie",
-      version: "0.2.0",
-      description: "AtDev virtual credits wallet",
-      policy: { realMoney: false, deposits: false, withdrawals: false, monetaryValue: false }
-    });
-  }
-
   if (method === "GET" && path === "/health") {
     try {
       await env.DB.prepare("SELECT 1").first();
@@ -303,6 +294,9 @@ async function handleApi(request, env) {
 export default {
   async fetch(request, env) {
     try {
+      const url = new URL(request.url);
+      const isApiPath = url.pathname === "/health" || url.pathname.startsWith("/v1/") || url.pathname.startsWith("/internal/");
+      if (!isApiPath && env.ASSETS) return await env.ASSETS.fetch(request);
       return await handleApi(request, env);
     } catch (error) {
       const status = Number(error && error.status) || 500;
