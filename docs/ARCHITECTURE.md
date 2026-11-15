@@ -43,4 +43,4 @@ The balance is a cached current total. The transaction ledger is the audit trail
 
 ## Current implementation boundary
 
-The Worker API and D1 schema are implemented. The catalogue contains two demo SKUs. AtDev Cloud has not yet been connected as a credit-granting service, and the Walletie dashboard has not yet been built.
+The Worker API, D1 schema, and responsive dashboard are implemented. The dashboard holds the supplied AtDev JWT in page memory only. The catalogue contains two demo SKUs. AtDev Cloud has not yet been connected as a credit-granting service.
