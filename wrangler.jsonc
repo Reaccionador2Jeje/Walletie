@@ -6,15 +6,13 @@
   "workers_dev": true,
   "observability": {
     "enabled": true,
-    "traces": {
-      "enabled": true
-    }
+    "traces": { "enabled": true }
   },
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "walletie-db",
-      "database_id": "REPLACE_WITH_WALLETIE_D1_DATABASE_ID",
+      "database_name": "atdev-cloud-db",
+      "database_id": "2bd7bc05-3f00-4faf-9dff-054b0c50b98a",
       "migrations_dir": "migrations"
     }
   ]
