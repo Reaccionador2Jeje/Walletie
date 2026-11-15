@@ -15,7 +15,8 @@
     "deploy": "wrangler deploy",
     "db:local": "wrangler d1 migrations apply atdev-cloud-db --local",
     "db:remote": "wrangler d1 migrations apply atdev-cloud-db --remote",
-    "check": "node --check src/index.js && node --check src/client.js"
+    "check": "node --check src/index.js && node --check src/client.js",
+    "test": "node --test"
   },
   "devDependencies": {
     "wrangler": "^4.162.0"
