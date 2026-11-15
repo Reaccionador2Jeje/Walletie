@@ -16,10 +16,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install dependencies
+        run: npm install
       - name: Check Worker and SDK JavaScript syntax
-        run: |
-          node --check src/index.js
-          node --check src/client.js
+        run: npm run check
+      - name: Run SDK tests
+        run: npm test
       - name: Validate package and Wrangler configuration
         run: node -e "const fs=require('node:fs'); JSON.parse(fs.readFileSync('package.json','utf8')); JSON.parse(fs.readFileSync('wrangler.jsonc','utf8'))"
       - name: Check dashboard JavaScript syntax
