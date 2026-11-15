@@ -18,5 +18,7 @@ jobs:
           node-version: 22
       - name: Check Worker JavaScript syntax
         run: node --check src/index.js
-      - name: Validate package metadata
-        run: node -e "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8'))"
+      - name: Validate package and Wrangler configuration
+        run: node -e "const fs=require('node:fs'); JSON.parse(fs.readFileSync('package.json','utf8')); JSON.parse(fs.readFileSync('wrangler.jsonc','utf8'))"
+      - name: Check dashboard JavaScript syntax
+        run: node --input-type=module -e "import fs from 'node:fs'; const html=fs.readFileSync('public/index.html','utf8'); for (const match of html.matchAll(/<script>([\\s\\S]*?)<\\/script>/g)) new Function(match[1]);"
