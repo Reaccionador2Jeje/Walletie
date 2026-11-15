@@ -1,8 +1,8 @@
 # Walletie
 
-**Walletie** is AtDev's open-source virtual credits wallet. It lets users receive, spend, and track credits inside approved AtDev products.
+**Walletie** is AtDev's universal open-source virtual-credits service. It provides one shared wallet and transaction ledger for compatible AtDev products.
 
-> Walletie credits have no monetary value. Walletie does not support real money, deposits, withdrawals, cash redemption, or external transfers.
+> Walletie credits are virtual units with no monetary value. Walletie does not support real-money deposits, withdrawals, cash redemption, or external transfers.
 
 ## V1 status
 
@@ -14,8 +14,39 @@
 - [x] Server-priced demo catalogue and spending endpoint
 - [x] Service-authenticated credit grants
 - [x] Walletie dashboard
+- [x] Universal JavaScript / TypeScript SDK foundation
+- [x] Language-neutral REST integration protocol
+- [x] AtDev repository compatibility matrix
 - [ ] AtDev Cloud service-to-service integration
-- [ ] Automated integration tests
+- [ ] Joynexa integration
+- [ ] Automated API and SDK integration tests
+- [ ] Publish the SDK as an installable package
+
+## Ecosystem compatibility
+
+Walletie is designed to be compatible with every AtDev repository, but not every project needs to use credits. Gaming and community products may use optional rewards or virtual cosmetics. Developer tools, runtimes, operating-system utilities, and infrastructure remain fully usable without Walletie.
+
+See [the AtDev integration matrix](docs/INTEGRATION_MATRIX.md) for the repository-by-repository plan.
+
+## SDK
+
+The repository includes the JavaScript / TypeScript SDK:
+
+```js
+import { Walletie } from "@atdev/walletie";
+
+const walletie = new Walletie({
+  baseUrl: "https://walletie.example.com",
+  getAccessToken: () => authSession.getAccessToken()
+});
+
+const wallet = await walletie.getWallet();
+const history = await walletie.getTransactions({ limit: 20 });
+```
+
+The package is marked private while its API is being stabilized. During development, products can import `src/client.js` directly or install the repository from Git. The SDK never stores access tokens and never exposes the server-only credit grant operation.
+
+See [SDK and integration protocol](docs/SDK.md).
 
 ## Architecture
 
@@ -23,6 +54,7 @@
 - **Database:** the existing `atdev-cloud-db` D1 database
 - **Identity:** AtDev Cloud JWTs, verified with the same `JWT_SECRET`
 - **Ledger:** append-only wallet transaction records
+- **SDK:** JavaScript / TypeScript client plus language-neutral HTTPS API
 
 Walletie reuses AtDev Cloud's user table. It does not create a second account system.
 
@@ -39,6 +71,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/API.md](docs/API.md).
    ```
 4. Apply migrations locally: `npm run db:local`
 5. Start the Worker: `npm run dev`
+6. Check syntax: `npm run check`
 
 ## Cloudflare secrets
 
@@ -65,6 +98,7 @@ All `/v1/*` user routes require an AtDev Cloud bearer token. The internal credit
 - Mutations require idempotency keys.
 - Balance changes and ledger entries are committed together in a D1 batch.
 - Transfers, cash value, deposits, and withdrawals are intentionally unsupported.
+- Core functionality across AtDev products must not be paywalled by default.
 
 ## License
 
