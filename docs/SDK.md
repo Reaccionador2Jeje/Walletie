@@ -44,6 +44,16 @@ await walletie.spend("profile_theme", { idempotencyKey: key });
 // If the network response is lost, retry with the SAME key.
 ```
 
+## Browser access and CORS
+
+The Worker automatically allows its own origin. For a separate AtDev frontend, configure the comma-separated Worker variable WALLETIE_ALLOWED_ORIGINS with exact HTTPS origins, for example:
+
+```text
+WALLETIE_ALLOWED_ORIGINS=https://joynexa.example.com,https://librecoding.example.com
+```
+
+Do not use a wildcard origin. The Worker allows the Authorization, Content-Type, and Idempotency-Key request headers and supports GET, POST, and OPTIONS. Requests from unlisted browser origins are rejected. Server-to-server requests without an Origin header do not use browser CORS.
+
 ## Any language / platform
 
 The REST API is language-neutral. Products written in Go, Rust, Python, C/C++, Memingo, or another language can call the same HTTPS endpoints:
