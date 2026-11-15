@@ -7,9 +7,9 @@ The repository list below reflects projects found in the connected GitHub accoun
 | Repository | Integration role | Priority | Notes |
 |---|---|---:|---|
 | [Walletie](https://github.com/Reaccionador2Jeje/Walletie) | Central wallet and ledger | Core | Owns balances, transactions, catalogue, and service authorization. |
-| [atdev-cloud](https://github.com/Reaccionador2Jeje/atdev-cloud) | Identity and trusted backend | Core | Issues identity tokens and may grant validated rewards from server-side events. |
-| [Joynexa](https://github.com/Reaccionador2Jeje/Joynexa) | Gaming client / reward provider | High | Wallet display, optional virtual cosmetics, and server-validated game rewards. |
-| [atdev-accounts](https://github.com/Reaccionador2Jeje/atdev-accounts) | Identity integration | High | Should share or delegate to the canonical AtDev identity; must not create a second wallet. |
+| [atdev-cloud](https://github.com/Reaccionador2Jeje/atdev-cloud) | V1 identity provider and trusted backend | Core | Its HS256 token is the only identity token currently accepted by Walletie. Reward-grant integration remains pending. |
+| [Joynexa](https://github.com/Reaccionador2Jeje/Joynexa) | Gaming client / reward provider | High | Has a separate Joynexa ID backend today. Needs verified account linking/SSO before Walletie calls; existing XP remains separate. |
+| [atdev-accounts](https://github.com/Reaccionador2Jeje/atdev-accounts) | Target ecosystem OIDC provider | High | Separate RS256/JWKS identity system today. Walletie does not yet validate its tokens; future canonical SSO needs account mapping. |
 | [LibreCoding](https://github.com/Reaccionador2Jeje/LibreCoding) | Learning rewards | Optional | Could grant non-purchasable participation/achievement credits after server validation. Learning remains free. |
 | [Memingo](https://github.com/Reaccionador2Jeje/Memingo) | Language ecosystem | Optional | Possible community achievements or optional creator rewards. |
 | [Node.mgo-](https://github.com/Reaccionador2Jeje/Node.mgo-) | Runtime ecosystem | Optional | No direct wallet dependency; integrations belong in trusted services or companion apps. |
@@ -26,7 +26,7 @@ The repository list below reflects projects found in the connected GitHub accoun
 ## Integration tiers
 
 ### Tier 1 — Identity and platform
-AtDev Cloud and AtDev Accounts provide a canonical identity contract. Walletie validates signed identity tokens and checks that the account exists. Do not create product-specific wallet tables.
+AtDev Cloud is the only identity provider accepted by Walletie V1. AtDev Accounts is the target OIDC/SSO provider, but its RS256 tokens are not yet accepted and its accounts are not yet mapped to AtDev Cloud users. Do not treat the systems as interchangeable or create product-specific wallet tables.
 
 ### Tier 2 — User-facing products
 Joynexa and future apps may show a user's balance and transaction history, and request purchases by server-defined SKU. Product backends may request grants after validating a reward event.
@@ -44,4 +44,4 @@ A product is Walletie-compatible when it:
 5. Keeps service credentials on trusted servers only.
 6. Does not make core/free functionality depend on credits.
 
-A product is **integrated** only after its code, tests, and authentication flow have actually been connected. Listing it in this matrix means planned compatibility, not completed integration.
+A product is **integrated** only after its code, tests, and authentication flow have actually been connected. Listing it in this matrix means planned compatibility, not completed integration. See [identity compatibility](IDENTITY.md) for current token limitations and the SSO migration plan.
