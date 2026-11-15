@@ -1,15 +1,21 @@
 {
-  "name": "walletie",
-  "version": "0.2.0",
+  "name": "@atdev/walletie",
+  "version": "0.3.0",
   "private": true,
-  "description": "AtDev ecosystem virtual credits wallet",
+  "description": "Universal virtual credits wallet and SDK for AtDev products",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/client.d.ts",
+      "import": "./src/client.js"
+    }
+  },
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "db:local": "wrangler d1 migrations apply atdev-cloud-db --local",
     "db:remote": "wrangler d1 migrations apply atdev-cloud-db --remote",
-    "check": "node --check src/index.js"
+    "check": "node --check src/index.js && node --check src/client.js"
   },
   "devDependencies": {
     "wrangler": "^4.162.0"
