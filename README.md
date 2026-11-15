@@ -18,6 +18,7 @@
 - [x] Language-neutral REST integration protocol
 - [x] AtDev repository compatibility matrix
 - [ ] AtDev Cloud service-to-service integration
+- [ ] AtDev Accounts OIDC validation and safe account mapping
 - [ ] Joynexa integration
 - [ ] Automated API and SDK integration tests
 - [ ] Publish the SDK as an installable package
@@ -26,7 +27,7 @@
 
 Walletie is designed to be compatible with every AtDev repository, but not every project needs to use credits. Gaming and community products may use optional rewards or virtual cosmetics. Developer tools, runtimes, operating-system utilities, and infrastructure remain fully usable without Walletie.
 
-See [the AtDev integration matrix](docs/INTEGRATION_MATRIX.md) for the repository-by-repository plan.
+See [the AtDev integration matrix](docs/INTEGRATION_MATRIX.md) for the repository-by-repository plan and [identity compatibility](docs/IDENTITY.md) for the important current authentication limitation.
 
 ## SDK
 
