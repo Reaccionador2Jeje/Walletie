@@ -8,6 +8,38 @@ const JSON_HEADERS = {
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+function getCorsHeaders(request, env) {
+  const origin = request.headers.get("origin");
+  if (!origin) return null;
+
+  const ownOrigin = new URL(request.url).origin;
+  const configured = String(env.WALLETIE_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map(value => value.trim())
+    .filter(Boolean);
+  const allowed = new Set([ownOrigin, ...configured]);
+  if (!allowed.has(origin)) return false;
+
+  return {
+    "access-control-allow-origin": origin,
+    "access-control-allow-methods": "GET, POST, OPTIONS",
+    "access-control-allow-headers": "Authorization, Content-Type, Idempotency-Key",
+    "access-control-max-age": "600",
+    "vary": "Origin"
+  };
+}
+
+function withCors(response, headers) {
+  if (!headers) return response;
+  const merged = new Headers(response.headers);
+  for (const [name, value] of Object.entries(headers)) merged.set(name, value);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: merged
+  });
+}
+
 // Demonstration catalogue. Prices are enforced by the server, never by the browser.
 const PRODUCT_CATALOG = Object.freeze({
   profile_theme: 10,
@@ -293,17 +325,27 @@ async function handleApi(request, env) {
 
 export default {
   async fetch(request, env) {
+    let corsHeaders = null;
     try {
+      corsHeaders = getCorsHeaders(request, env);
+      if (corsHeaders === false) return json({ error: "Origin is not allowed." }, 403);
+
+      if (request.method.toUpperCase() === "OPTIONS") {
+        return withCors(new Response(null, { status: 204 }), corsHeaders);
+      }
+
       const url = new URL(request.url);
       const isApiPath = url.pathname === "/health" || url.pathname.startsWith("/v1/") || url.pathname.startsWith("/internal/");
-      if (!isApiPath && env.ASSETS) return await env.ASSETS.fetch(request);
-      return await handleApi(request, env);
+      const response = !isApiPath && env.ASSETS
+        ? await env.ASSETS.fetch(request)
+        : await handleApi(request, env);
+      return withCors(response, corsHeaders);
     } catch (error) {
       const status = Number(error && error.status) || 500;
       if (status >= 500) {
         console.error(JSON.stringify({ level: "error", service: "walletie", message: String(error && error.message || error) }));
       }
-      return json({ error: status >= 500 ? "Internal server error." : String(error.message || error) }, status);
+      return withCors(json({ error: status >= 500 ? "Internal server error." : String(error.message || error) }, status), corsHeaders);
     }
   }
 };
